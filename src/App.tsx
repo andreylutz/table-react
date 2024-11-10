@@ -19,29 +19,36 @@ export default function App() {
 
   const clearHeroes = () => {
     dispatch(actionRecording.clearRecording());
-  }
+  };
+
+  const removeHero = (name: string): void => {
+    dispatch(actionRecording.removeRecording(name));
+  };
 
   return (
     <div className={styles.app}>
       <h1>Star Wars Heroes</h1>
-      {
-        heroes.length ? (<button 
+      {heroes.length ? (
+        <button 
           type="button" 
           className={styles.button}
           onClick={clearHeroes}
         >
           CLEAR HEROES
-        </button>) : (<button 
+        </button>
+      ) : (
+        <button 
           type="button" 
           className={styles.button}
           onClick={setHeroes}
         >
           GET HEROES
-        </button>)
-      }
+        </button>
+      )}
       <Table 
         heroes={heroes} 
-        loading={loading} 
+        loading={loading}
+        onRemove={removeHero}
       />
     </div>
   );
