@@ -8,7 +8,7 @@ import { actionRecording } from './store/actions/actionRecording';
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
-  const heroes = useSelector((state: RootState) => state.recording.records);
+  const heroes = useSelector((state: RootState) => state.records);
   const [loading, setLoading] = useState(false);
 
   const setHeroes = async () => {
