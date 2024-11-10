@@ -1,22 +1,48 @@
-// import Table from "./components/Table";
-import { useEffect } from "react";
+import styles from './styles/app.module.scss';
 import { useSelector, useDispatch } from 'react-redux';
-import { getRecords } from './api/recordsAsync';
+import { getHeroes } from './api/getHeroesAsync';
 import { RootState, AppDispatch } from './store';
+import { Table } from "./components/Table/Table";
+import { useState } from 'react';
+import { actionRecording } from './store/actions/actionRecording';
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
   const heroes = useSelector((state: RootState) => state.recording.records);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    dispatch(getRecords(1));
-  }, [dispatch]);
+  const setHeroes = async () => {
+    setLoading(true);
+    await dispatch(getHeroes(1));
+    setLoading(false);
+  };
 
-  console.warn(heroes);
+  const clearHeroes = () => {
+    dispatch(actionRecording.clearRecording());
+  }
 
   return (
-    <div className="app"> 
-      <h1>Heroes</h1>
+    <div className={styles.app}>
+      <h1>Star Wars Heroes</h1>
+      {
+        heroes.length ? (<button 
+          type="button" 
+          className={styles.button}
+          onClick={clearHeroes}
+        >
+          CLEAR HEROES
+        </button>) : (<button 
+          type="button" 
+          className={styles.button}
+          onClick={setHeroes}
+        >
+          GET HEROES
+        </button>)
+      }
+      <Table 
+        heroes={heroes} 
+        loading={loading} 
+      />
     </div>
   );
-};
+}
