@@ -1,4 +1,4 @@
-import { SET_RECORDING, REMOVE_RECORDING, ADD_RECORDING, CLEAR_RECORDING, type RecordActionsType } from "../actions/actionRecording";
+import { SET_RECORDING, REMOVE_RECORDING, UPDATE_RECORDING_ORDER, CLEAR_RECORDING, type RecordActionsType } from "../actions/actionRecording";
 import { type RecordType } from '../models/people-type';
 
 /** Начальное состояние записей таблицы */
@@ -14,12 +14,12 @@ export const myRecordsReducer = (state = initialState, action: RecordActionsType
     // Удалить запись
     case REMOVE_RECORDING:
       return { ...state, records: state.records.filter((record: RecordType) => record.name !== action.payload) };
-    // Добавить новую запись
-    case ADD_RECORDING:
-      return { ...state, records: [...state.records, action.payload] };
     // Полная очистка списка записей
     case CLEAR_RECORDING:
       return { ...state, records: [] };
+    // Обновить порядок записей
+    case UPDATE_RECORDING_ORDER:
+      return { ...state, records: action.payload };
     default:
       return state;
   }
