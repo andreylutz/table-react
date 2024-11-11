@@ -2,9 +2,11 @@ import styles from './styles/app.module.scss';
 import { useSelector, useDispatch } from 'react-redux';
 import { getHeroes } from './api/getHeroesAsync';
 import { RootState, AppDispatch } from './store';
-import { Table } from "./components/Table/Table";
+import { Table } from './components/Table/Table';
 import { useState } from 'react';
 import { actionRecording } from './store/actions/actionRecording';
+import { RecordType } from './store/models/people-type';
+import video from './styles/img/dart.mp4';
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -13,6 +15,7 @@ export default function App() {
 
   const setHeroes = async () => {
     setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     await dispatch(getHeroes(1));
     setLoading(false);
   };
@@ -23,6 +26,10 @@ export default function App() {
 
   const removeHero = (name: string): void => {
     dispatch(actionRecording.removeRecording(name));
+  };
+
+  const updateHeroesOrder = (heroes: RecordType[]) => {
+    dispatch(actionRecording.updateRecordingOrder(heroes));
   };
 
   return (
@@ -49,7 +56,11 @@ export default function App() {
         heroes={heroes} 
         loading={loading}
         onRemove={removeHero}
+        onUpdateHeroesOrder={updateHeroesOrder}
       />
+      <video autoPlay loop muted className={styles.myVideo}>
+         <source src={video} type="video/mp4"/>
+      </video>
     </div>
   );
 }

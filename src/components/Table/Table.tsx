@@ -8,9 +8,10 @@ interface TableProps {
   heroes: RecordType[];
   loading: boolean;
   onRemove: (name: string) => void;
+  onUpdateHeroesOrder: (heroes: RecordType[]) => void;
 }
 
-export const Table: React.FC<TableProps> = ({ heroes, loading, onRemove }) => {
+export const Table: React.FC<TableProps> = ({ heroes, loading, onRemove, onUpdateHeroesOrder }) => {
   const [showModal, setShowModal] = useState(false);
   const [heroToDelete, setHeroToDelete] = useState<string | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: string | null; direction: 'asc' | 'desc' }>({
@@ -25,7 +26,7 @@ export const Table: React.FC<TableProps> = ({ heroes, loading, onRemove }) => {
 
   const handleConfirmDelete = () => {
     if (heroToDelete) {
-      onRemove(heroToDelete)
+      onRemove(heroToDelete);
       setShowModal(false);
       setHeroToDelete(null);
     }
@@ -58,29 +59,52 @@ export const Table: React.FC<TableProps> = ({ heroes, loading, onRemove }) => {
     return 0;
   });
 
+  const handleDragStart = (e: React.DragEvent<HTMLTableRowElement>, heroName: string) => {
+    e.dataTransfer.setData("text/plain", heroName);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLTableRowElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLTableRowElement>, dropIndex: number) => {
+    e.preventDefault();
+
+    const draggedHeroName = e.dataTransfer.getData("text/plain");
+    const draggedHeroIndex = heroes.findIndex(hero => hero.name === draggedHeroName);
+
+    if (draggedHeroIndex === -1) return; // Пропустить, если элемент не найден
+
+    const updatedHeroes = [...heroes];
+    const [draggedHero] = updatedHeroes.splice(draggedHeroIndex, 1);
+    updatedHeroes.splice(dropIndex, 0, draggedHero);
+
+    onUpdateHeroesOrder(updatedHeroes);
+  };
+
   return (
     <div className={styles.tableContainer}>
       <table className={styles.table}>
         <thead>
           <tr>
             <th onClick={() => handleSort('name')}>
-              Имя {sortConfig.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+              Name {sortConfig.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </th>
             <th onClick={() => handleSort('height')}>
-              Рост {sortConfig.key === 'height' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+              Height {sortConfig.key === 'height' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </th>
             <th onClick={() => handleSort('mass')}>
-              Вес {sortConfig.key === 'mass' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+              Mass {sortConfig.key === 'mass' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </th>
             <th onClick={() => handleSort('eye_color')}>
-              Цвет глаз {sortConfig.key === 'eye_color' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+              Eye color {sortConfig.key === 'eye_color' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </th>
             <th onClick={() => handleSort('gender')}>
-              Пол {sortConfig.key === 'gender' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+              Gender {sortConfig.key === 'gender' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
             </th>
-            <th>
-              Действие
-            </th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -91,8 +115,14 @@ export const Table: React.FC<TableProps> = ({ heroes, loading, onRemove }) => {
               </td>
             </tr>
           ) : sortedHeroes && heroes.length > 0 ? (
-            sortedHeroes.map((hero) => (
-              <tr key={hero.name}>
+            sortedHeroes.map((hero, index) => (
+              <tr
+                key={hero.name}
+                draggable
+                onDragStart={(e) => handleDragStart(e, hero.name)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, index)}
+              >
                 <td>{hero.name}</td>
                 <td>{hero.height}</td>
                 <td>{hero.mass}</td>
@@ -120,8 +150,8 @@ export const Table: React.FC<TableProps> = ({ heroes, loading, onRemove }) => {
 
       {showModal && (
         <Modal
-          title="Подтверждение удаления"
-          message={`Вы уверены, что хотите удалить ${heroToDelete}?`}
+          title="Confirm deletion"
+          message={`Are you sure you want to delete ${heroToDelete}?`}
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
         />

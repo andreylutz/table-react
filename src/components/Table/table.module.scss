@@ -46,6 +46,20 @@
   }
 }
 
+.deleteButton {
+   color: #252222;
+   font-size: 0.9rem;
+   font-weight: 600;
+   border: 0.5px solid #777a7c;
+   padding: 0.2rem;
+   border-radius: 0.25rem;
+
+   &:hover {
+    background-color: #252222;
+    color: #fff;
+   }
+}
+
 .centeredCell {
   text-align: center;
   font-size: 1.2rem;

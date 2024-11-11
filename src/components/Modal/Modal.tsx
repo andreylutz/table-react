@@ -15,8 +15,8 @@ export const Modal: React.FC<ModalProps> = ({ title, message, onConfirm, onCance
         <h3>{title}</h3>
         <p>{message}</p>
         <div className={styles.modalButtons}>
-          <button onClick={onCancel} className={styles.cancelButton}>Отмена</button>
-          <button onClick={onConfirm} className={styles.confirmButton}>Удалить</button>
+          <button onClick={onConfirm} className={styles.confirmButton}>Delete</button>
+          <button onClick={onCancel} className={styles.cancelButton}>Cancel</button>
         </div>
       </div>
     </div>
