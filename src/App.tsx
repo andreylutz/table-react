@@ -4,15 +4,16 @@ import { getHeroes } from './api/getHeroesAsync';
 import { RootState, AppDispatch } from './store';
 import { Table } from './components/Table/Table';
 import { useState } from 'react';
-import { actionRecording } from './store/actions/actionRecording';
-import { RecordType } from './store/models/people-type';
+import { actionsHeroes } from './store/actions/actionsHeroes';
+import { HeroType } from './store/models/hero-type';
 import video from './styles/img/dart.mp4';
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
-  const heroes = useSelector((state: RootState) => state.records);
+  const heroes = useSelector((state: RootState) => state.heroes);
   const [loading, setLoading] = useState(false);
 
+  // Загрузить информацию о героях
   const setHeroes = async () => {
     setLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -20,16 +21,19 @@ export default function App() {
     setLoading(false);
   };
 
+  // Полностью отчистит таблицу героев
   const clearHeroes = () => {
-    dispatch(actionRecording.clearRecording());
+    dispatch(actionsHeroes.clearHeroes());
   };
 
+  // Удалит информацию о герое
   const removeHero = (name: string): void => {
-    dispatch(actionRecording.removeRecording(name));
+    dispatch(actionsHeroes.removeHero(name));
   };
 
-  const updateHeroesOrder = (heroes: RecordType[]) => {
-    dispatch(actionRecording.updateRecordingOrder(heroes));
+  // Обновит список героев
+  const updateHeroesOrder = (heroes: HeroType[]) => {
+    dispatch(actionsHeroes.updateHeroesOrder(heroes));
   };
 
   return (

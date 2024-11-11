@@ -1,4 +1,5 @@
-export type RecordType =  {
+/** Информация о герое */
+export type HeroType =  {
   name: string,
   height: string,
   mass: string,
