@@ -5,16 +5,20 @@ import { useEffect, useState } from 'react';
 import { Modal } from '../Modal/Modal';
 
 interface TableProps {
+  /** Список героев */
   heroes: HeroType[];
+  /** Флаг загрузки героев */
   loading: boolean;
+  /**  Удалит героя по имени */
   onRemove: (name: string) => void;
+  /**  Обновит сортировку героев */
   onUpdateHeroesOrder: (heroes: HeroType[]) => void;
 }
 
 export const Table: React.FC<TableProps> = ({ heroes, loading, onRemove, onUpdateHeroesOrder }) => {
   // Локальное состояние списка героев
   const [localHeroes, setLocalHeroes] = useState<HeroType[]>([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   // Герой для удаления
   const [heroToDelete, setHeroToDelete] = useState<string | null>(null);
   // Настройка сортировки

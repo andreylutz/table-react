@@ -11,13 +11,12 @@ import video from './styles/img/dart.mp4';
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
   const heroes = useSelector((state: RootState) => state.heroes);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Загрузить информацию о героях
-  const setHeroes = async () => {
+  const setInitHeroes = async () => {
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    await dispatch(getHeroes(1));
+    await dispatch(getHeroes());
     setLoading(false);
   };
 
@@ -51,12 +50,12 @@ export default function App() {
         <button 
           type="button" 
           className={styles.button}
-          onClick={setHeroes}
+          onClick={setInitHeroes}
         >
           GET HEROES
         </button>
       )}
-      <Table 
+      <Table
         heroes={heroes} 
         loading={loading}
         onRemove={removeHero}

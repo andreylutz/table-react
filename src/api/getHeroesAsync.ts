@@ -4,14 +4,23 @@ import { AppDispatch } from '../store';
 
 /** 
  * Получит коллекцию героев 
- * @param page - номер списка получаемых данных на одной странице 10 экземпляров<div className=""></div>
  * @returns Promise<void>
  */
-export const getHeroes = (page = 1) => async (dispatch: AppDispatch): Promise<void> => {
+export const getHeroes = () => async (dispatch: AppDispatch): Promise<void> => {
   try {
-    const response = await api.get(`/people?page=${ page }`);
+    const allHeroes = [];
+    const countResponse = await api.get('/people/');
+    const totalHeroes = countResponse.data.count;
+    if (!totalHeroes) return;
 
-    dispatch(actionsHeroes.setHeroes(response.data.results));
+    const totalPages = Math.ceil(totalHeroes / 10);
+
+    for (let page = 1; page <= totalPages; page++) {
+      const response = await api.get(`/people?page=${page}`);
+      allHeroes.push(...response.data.results);
+    }
+
+    dispatch(actionsHeroes.setHeroes(allHeroes));
   } catch (e: any) {
     console.error(e.response?.data?.detail || 'An error occurred');
   }
