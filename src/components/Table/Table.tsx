@@ -1,29 +1,39 @@
 import styles from './table.module.scss';
-import { RecordType } from '../../store/models/people-type';
+import { HeroType } from '../../store/models/hero-type';
 import { Loader } from '../../ui/Loader/Loader';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal } from '../Modal/Modal';
 
 interface TableProps {
-  heroes: RecordType[];
+  heroes: HeroType[];
   loading: boolean;
   onRemove: (name: string) => void;
-  onUpdateHeroesOrder: (heroes: RecordType[]) => void;
+  onUpdateHeroesOrder: (heroes: HeroType[]) => void;
 }
 
 export const Table: React.FC<TableProps> = ({ heroes, loading, onRemove, onUpdateHeroesOrder }) => {
+  // Локальное состояние списка героев
+  const [localHeroes, setLocalHeroes] = useState<HeroType[]>([]);
   const [showModal, setShowModal] = useState(false);
+  // Герой для удаления
   const [heroToDelete, setHeroToDelete] = useState<string | null>(null);
+  // Настройка сортировки
   const [sortConfig, setSortConfig] = useState<{ key: string | null; direction: 'asc' | 'desc' }>({
     key: null,
     direction: 'asc',
   });
 
+  useEffect(() => {
+    setLocalHeroes(heroes);
+  }, [heroes]);
+
+  // Откроет модальное окно для удаления героя
   const handleDeleteClick = (heroName: string) => {
     setHeroToDelete(heroName);
     setShowModal(true);
   };
 
+  // Удалит героя
   const handleConfirmDelete = () => {
     if (heroToDelete) {
       onRemove(heroToDelete);
@@ -32,55 +42,59 @@ export const Table: React.FC<TableProps> = ({ heroes, loading, onRemove, onUpdat
     }
   };
 
+  // Закроет модальное окно удаления героя
   const handleCancelDelete = () => {
     setShowModal(false);
     setHeroToDelete(null);
   };
 
+  // Отсортирует таблицу
   const handleSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
     }
     setSortConfig({ key, direction });
+
+    const sortedData = [...localHeroes].sort((a, b) => {
+      const aValue = a[key as keyof HeroType];
+      const bValue = b[key as keyof HeroType];
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return direction === 'asc'
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+      return 0;
+    });
+    setLocalHeroes(sortedData);
   };
 
-  const sortedHeroes = [...heroes].sort((a, b) => {
-    if (!sortConfig.key) return 0;
-
-    const aValue = a[sortConfig.key as keyof RecordType];
-    const bValue = b[sortConfig.key as keyof RecordType];
-
-    if (typeof aValue === 'string' && typeof bValue === 'string') {
-      return sortConfig.direction === 'asc'
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    }
-    return 0;
-  });
-
+  // Обработчик начала перемещения элемента таблицы
   const handleDragStart = (e: React.DragEvent<HTMLTableRowElement>, heroName: string) => {
     e.dataTransfer.setData("text/plain", heroName);
     e.dataTransfer.effectAllowed = 'move';
   };
 
+  // Обработчик окончания перемещения элемента таблицы
   const handleDragOver = (e: React.DragEvent<HTMLTableRowElement>) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
 
+  // Drop событие
   const handleDrop = (e: React.DragEvent<HTMLTableRowElement>, dropIndex: number) => {
     e.preventDefault();
 
     const draggedHeroName = e.dataTransfer.getData("text/plain");
-    const draggedHeroIndex = heroes.findIndex(hero => hero.name === draggedHeroName);
+    const draggedHeroIndex = localHeroes.findIndex(hero => hero.name === draggedHeroName);
 
-    if (draggedHeroIndex === -1) return; // Пропустить, если элемент не найден
+    if (draggedHeroIndex === -1) return;
 
-    const updatedHeroes = [...heroes];
+    const updatedHeroes = [...localHeroes];
     const [draggedHero] = updatedHeroes.splice(draggedHeroIndex, 1);
     updatedHeroes.splice(dropIndex, 0, draggedHero);
 
+    setLocalHeroes(updatedHeroes);
     onUpdateHeroesOrder(updatedHeroes);
   };
 
@@ -111,11 +125,13 @@ export const Table: React.FC<TableProps> = ({ heroes, loading, onRemove, onUpdat
           {loading ? (
             <tr>
               <td colSpan={6} className={styles.centeredCell}>
-                <Loader />
+                <div className={styles.wrapper}>
+                  <Loader />
+                </div>
               </td>
             </tr>
-          ) : sortedHeroes && heroes.length > 0 ? (
-            sortedHeroes.map((hero, index) => (
+          ) : localHeroes.length > 0 ? (
+            localHeroes.map((hero, index) => (
               <tr
                 key={hero.name}
                 draggable
@@ -141,7 +157,9 @@ export const Table: React.FC<TableProps> = ({ heroes, loading, onRemove, onUpdat
           ) : (
             <tr>
               <td colSpan={6} className={styles.centeredCell}>
-                No data
+                <div className={styles.wrapper}>
+                  No data
+                </div>
               </td>
             </tr>
           )}

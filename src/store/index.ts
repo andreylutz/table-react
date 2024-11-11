@@ -1,7 +1,7 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import { myRecordsReducer } from './reducers/recording.reducer';
+import { persistStore, persistReducer } from 'redux-persist';
+import { configureStore } from '@reduxjs/toolkit';
+import { myHeroesReducer } from './reducers/heroes.reducer';
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
@@ -10,7 +10,7 @@ const persistConfig = {
   key: 'root',
   storage
 };
-const persistedReducer = persistReducer(persistConfig, myRecordsReducer);
+const persistedReducer = persistReducer(persistConfig, myHeroesReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,

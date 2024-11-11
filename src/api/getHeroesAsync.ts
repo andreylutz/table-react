@@ -1,5 +1,5 @@
 import { api } from './axios';
-import { actionRecording } from '../store/actions/actionRecording';
+import { actionsHeroes } from '../store/actions/actionsHeroes';
 import { AppDispatch } from '../store';
 
 /** 
@@ -11,7 +11,7 @@ export const getHeroes = (page = 1) => async (dispatch: AppDispatch): Promise<vo
   try {
     const response = await api.get(`/people?page=${ page }`);
 
-    dispatch(actionRecording.setRecording(response.data.results));
+    dispatch(actionsHeroes.setHeroes(response.data.results));
   } catch (e: any) {
     console.error(e.response?.data?.detail || 'An error occurred');
   }
