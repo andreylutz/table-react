@@ -1,8 +1,7 @@
 .tableContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
+  max-height: 35rem;
+  overflow-y: auto;
+  margin: 1rem;
 }
 
 .table {
@@ -13,53 +12,45 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: #fff;
   border-radius: 8px;
-  overflow: hidden;
+}
 
-  th, td {
+thead {
+  position: sticky;
+  top: 0;
+  background-color: #343a40;
+  color: #f8f9fa;
+  z-index: 2;
+
+  th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 14px;
     padding: 12px 15px;
     text-align: left;
-  }
-
-  thead {
-    background-color: #343a40;
-    color: #f8f9fa;
-
-    th {
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 14px;
-      border-bottom: 2px solid #495057;
-    }
-  }
-
-  tbody {
-    tr {
-      &:nth-child(even) {
-        background-color: #f1f3f5;
-      }
-      &:hover {
-        background-color: #e9ecef;
-      }
-    }
-    td {
-      border-bottom: 1px solid #dee2e6;
-    }
+    border-bottom: 2px solid #495057;
+    cursor: pointer;
   }
 }
 
-.deleteButton {
-   color: #252222;
-   font-size: 0.9rem;
-   font-weight: 600;
-   border: 0.5px solid #777a7c;
-   padding: 0.2rem;
-   border-radius: 0.25rem;
 
-   &:hover {
-    background-color: #252222;
-    color: #fff;
-   }
+tbody {
+  width: 100%;
+
+  tr:nth-child(even) {
+    background-color: #f1f3f5;
+  }
+  
+  tr:hover {
+    background-color: #e9ecef;
+  }
+  
+  td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+  }
 }
+
 
 .centeredCell {
   text-align: center;
@@ -68,9 +59,23 @@
   color: #6c757d;
 }
 
+.deleteButton {
+  color: #252222;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 0.5px solid #777a7c;
+  padding: 0.2rem;
+  border-radius: 0.25rem;
+
+  &:hover {
+    background-color: #252222;
+    color: #fff;
+  }
+}
+
 .wrapper {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
 }
