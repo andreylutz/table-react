@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/table-react/static/css/main.e4fe902f.css",
+    "main.js": "/table-react/static/js/main.4bfd3be4.js",
+    "static/media/dart.mp4": "/table-react/static/media/dart.9a204fcbf45c6eebe7e8.mp4",
+    "index.html": "/table-react/index.html",
+    "main.e4fe902f.css.map": "/table-react/static/css/main.e4fe902f.css.map",
+    "main.4bfd3be4.js.map": "/table-react/static/js/main.4bfd3be4.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e4fe902f.css",
+    "static/js/main.4bfd3be4.js"
+  ]
+}
